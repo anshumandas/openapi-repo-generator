@@ -5,9 +5,9 @@
   },
   "private": true,
   "scripts": {
-    "start": "swagger-repo serve",
-    "build": "swagger-repo build -o web_deploy",
-    "test": "swagger-repo validate",
-    "gh-pages": "swagger-repo gh-pages"
+    "start": "SWAGERREPO_PLUGINS_DIR='node_modules/oas-path-generator/plugins' oas-repo serve",
+    "build": "oas-repo build -o web_deploy",
+    "test": "oas-repo validate",
+    "gh-pages": "oas-repo gh-pages"
   }
 }

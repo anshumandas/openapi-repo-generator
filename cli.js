@@ -10,7 +10,7 @@ const yaml = require('js-yaml');
 const slugify = require('slugify');
 const { execSync } = require('child_process');
 
-const swaggerRepo = require('swagger-repo');
+const swaggerRepo = require('oas-repo');
 
 const {
   copy,
@@ -50,7 +50,7 @@ async function ask() {
     defaultSpecVersion =
       (await prompt({
         type: 'list',
-        choices: ['OpenAPI 3', 'OpenAPI 2'],
+        choices: ['OpenAPI 3'],
         name: 'version',
         message: 'Select OpenAPI version:',
         validate(fileName) {
@@ -74,21 +74,22 @@ async function ask() {
     validate: i => (i.length > 0 ? true : `API Name can't be empty`)
   });
 
-  const { splitSpec } = await prompt({
-    type: 'confirm',
-    name: 'splitSpec',
-    message: `Split spec into separate files: paths/*, definitions/* ${chalk.yellow(
-      '[Experimental]'
-    )}?`,
-    default: true
-  });
-
-  const { codeSamples } = await prompt({
-    type: 'confirm',
-    name: 'codeSamples',
-    message: `Prepare manual code samples folder?`,
-    default: true
-  });
+  const splitSpec = true;
+  // const { splitSpec } = await prompt({
+  //   type: 'confirm',
+  //   name: 'splitSpec',
+  //   message: `Split spec into separate files: paths/*, definitions/* ${chalk.yellow(
+  //     '[Experimental]'
+  //   )}?`,
+  //   default: true
+  // });
+  //
+  // const { codeSamples } = await prompt({
+  //   type: 'confirm',
+  //   name: 'codeSamples',
+  //   message: `Prepare manual code samples folder?`,
+  //   default: true
+  // });
 
   const { swaggerUI } = await prompt({
     type: 'confirm',
@@ -121,7 +122,6 @@ async function ask() {
     specFileName,
     apiTitle,
     splitSpec,
-    codeSamples,
     swaggerUI,
     travis,
     repo,
@@ -140,16 +140,16 @@ function printSuccess(opts, root) {
   console.log(
     `${chalk.green('Success!')} Created ${chalk.green(path.basename(root))} at ${chalk.blue(root)}
 Inside that directory, you can run several commands:
-  
+
   ${chalk.blue(`npm start`)}
     Starts the development server.
 
   ${chalk.blue(`npm run build`)}
-    Bundles the spec and prepares ${chalk.blue('web_deploy')} folder with static assets. 
+    Bundles the spec and prepares ${chalk.blue('web_deploy')} folder with static assets.
 
   ${chalk.blue(`npm test`)}
     Validates the spec.
-  
+
   ${chalk.blue(`npm run gh-pages`)}
     Deploys docs to GitHub Pages. You don't need to run it manually if you have Travis CI configured.
 
@@ -228,18 +228,27 @@ Choose another directory or remove contents.
 
   copyDirSync('web');
 
-  swaggerRepo.syncWithSpec(fs.readFileSync(specFileName).toString());
+  var yam = swaggerRepo.parse(fs.readFileSync(specFileName).toString());
+
+  yam.info.description = yam.info.description + "\n"
+    + "`To create sub folders add comma separated links in Children`" + "\n"
+    + "# Links" + "\n\n"
+    + "__Children:__  [SubFolder](test/)" + "\n";
+
+  yam.info.externalDocs.url = 'https://github.com/anshumandas/openapi-repo-generator'
+
+  swaggerRepo.syncWithSpec(yam);
 
   fs.writeFileSync(REDOCLY_RC, yaml.safeDump(opts, { skipInvalid: true }));
 
   console.log('Installing packages. This might take a couple of minutes.\n');
 
-  await installDeps('@^2.0.0-rc.6');
+  await installDeps('@^1.0.0');
   console.log();
 
   try {
     execSync(`git init`, { stdio: 'inherit' });
-    execSync(`git add . && git commit -m "Initial commit from create-openapi-repo"`);
+    execSync(`git add . && git commit -m "Initial commit from openapi-repo-generator"`);
   } catch (e) {
     // skip error
   }

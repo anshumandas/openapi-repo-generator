@@ -1,4 +1,6 @@
-# create-openapi-repo
+# openapi-repo-generator
+
+This is forked from create-openapi-repo of Redocly to provide support for oas-repo and oas-path-generator projects
 
 [![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
@@ -37,19 +39,19 @@ This generator helps to create a GitHub repo with the following features:
 
 We assume you already have [node.js](https://nodejs.org/) installed.
 
-- Install `create-openapi-repo` globally:
+- Install `openapi-repo-generator` globally:
 ```bash
-npm install -g create-openapi-repo
+npm install -g openapi-repo-generator
 ```
 or use [`npx`](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b):
 
 ```bash
-npx create-openapi-repo <spec-root>
+npx openapi-repo-generator <spec-root>
 ```
 - [Create GitHub repo](https://help.github.com/articles/create-a-repo/#create-a-new-repository-on-github) where your OpenAPI spec will live.
 - [Clone your repo](https://help.github.com/articles/cloning-a-repository/) and execute the following command inside it:
 ```bash
-create-openapi-repo .
+openapi-repo-generator .
 ```
 -  Commit and push your changes to the GitHub and follow instruction from `README.md` of your newly created repo.
 
